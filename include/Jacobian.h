@@ -8,7 +8,6 @@
 #ifndef INCLUDE_JACOBIAN_H_
 #define INCLUDE_JACOBIAN_H_
 
-#include "ForwardKinematics.h"
 #include <iostream>
 #include <math.h>
 #include <eigen3/Eigen/Dense>
@@ -16,11 +15,14 @@
 
 namespace motion_planning {
 
-class Jacobian: public ForwardKinematics {
+class Jacobian{
 public:
 	Jacobian();
 	virtual ~Jacobian();
 	int computeJacobian(std::vector<double> joint_angles, Eigen::MatrixXd& jacob_mat);
+
+private:
+	std::vector<double> alpha, a, d, theta;
 };
 
 } /* namespace motion_planning */
