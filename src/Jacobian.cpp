@@ -55,7 +55,7 @@ int Jacobian::computeJacobian(std::vector<double> joint_angles, Eigen::MatrixXd&
 	jacobian(0,4) = d[5]*(-sin(th1)*sin(th5) - cos(th1)*cos(th5)*cos(th2 + th3 + th4));
 	jacobian(0,5) = 0;
 
-	jacobian(1,0) = a[1]*cos(th1)*cos(th2) + a[2]*cos(th1)*cos(th2 + th3) - d[3]*cos(th1) + d[4]*sin(th2 + th3 + th4)*cos(th1) + d[5]*(sin(th1)*cos(th5) - sin(th5)*cos(th1)*cos(th2 + th3 + th4));
+	jacobian(1,0) = a[1]*cos(th1)*cos(th2) + a[2]*cos(th1)*cos(th2 + th3) + d[3]*sin(th1) + d[4]*sin(th2 + th3 + th4)*cos(th1) + d[5]*(sin(th1)*cos(th5) - sin(th5)*cos(th1)*cos(th2 + th3 + th4));
 	jacobian(1,1) = -a[1]*sin(th1)*sin(th2) - a[2]*sin(th1)*sin(th2 + th3) + d[4]*sin(th1)*cos(th2 + th3 + th4) + d[5]*sin(th1)*sin(th5)*sin(th2 + th3 + th4);
 	jacobian(1,2) = -a[2]*sin(th1)*sin(th2 + th3) + d[4]*sin(th1)*cos(th2 + th3 + th4) + d[5]*sin(th1)*sin(th5)*sin(th2 + th3 + th4);
 	jacobian(1,3) =  d[4]*sin(th1)*cos(th2 + th3 + th4) + d[5]*sin(th1)*sin(th5)*sin(th2 + th3 + th4);
@@ -74,7 +74,7 @@ int Jacobian::computeJacobian(std::vector<double> joint_angles, Eigen::MatrixXd&
 	jacobian(3,2) = sin(th1);
 	jacobian(3,3) = sin(th1);
 	jacobian(3,4) = cos(th1)*sin(th2+th3+th4);
-	jacobian(3,5) = -cos(th1)*cos(th2+th3+th4)*sin(th5) + sin(th1)*sin(th5);
+	jacobian(3,5) = -cos(th1)*cos(th2+th3+th4)*sin(th5) + sin(th1)*cos(th5);
 
 	jacobian(4,0) = 0;
 	jacobian(4,1) = -cos(th1);
