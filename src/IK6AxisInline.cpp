@@ -5,7 +5,7 @@
  *      Author: abhishek
  */
 
-#include "/home/abhishek/eclipse-workspace/MotionPlanning/include/IK6AxisInline.h"
+#include "IK6AxisInline.h"
 
 namespace motion_planning {
 

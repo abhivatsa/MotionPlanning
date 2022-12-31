@@ -5,7 +5,7 @@
  *      Author: abhishek
  */
 
-#include "/home/abhishek/eclipse-workspace/MotionPlanning/include/ForwardKinematics.h"
+#include "ForwardKinematics.h"
 
 namespace motion_planning {
 
