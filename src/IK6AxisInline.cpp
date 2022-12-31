@@ -5,7 +5,7 @@
  *      Author: abhishek
  */
 
-#include "IK6AxisInline.h"
+#include <MotionPlanning/IK6AxisInline.h>
 
 namespace motion_planning {
 

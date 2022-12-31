@@ -5,7 +5,7 @@
  *      Author: abhishek
  */
 
-#include "ForwardKinematics.h"
+#include <MotionPlanning/ForwardKinematics.h>
 
 namespace motion_planning {
 

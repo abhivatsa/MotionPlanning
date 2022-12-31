@@ -5,8 +5,8 @@
  *      Author: abhishek
  */
 
-#ifndef INCLUDE_FORWARDKINEMATICS_H_
-#define INCLUDE_FORWARDKINEMATICS_H_
+#ifndef INCLUDE_MOTIONPLANNING_FORWARDKINEMATICS_H_
+#define INCLUDE_MOTIONPLANNING_FORWARDKINEMATICS_H_
 
 #include <iostream>
 #include <math.h>
@@ -31,4 +31,4 @@ private:
 
 } /* namespace motion_planning */
 
-#endif /* INCLUDE_FORWARDKINEMATICS_H_ */
+#endif /* INCLUDE_MOTIONPLANNING_FORWARDKINEMATICS_H_ */

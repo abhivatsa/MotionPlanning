@@ -5,8 +5,8 @@
  *      Author: abhishek
  */
 
-#ifndef INCLUDE_JACOBIAN_H_
-#define INCLUDE_JACOBIAN_H_
+#ifndef INCLUDE_MOTIONPLANNING_JACOBIAN_H_
+#define INCLUDE_MOTIONPLANNING_JACOBIAN_H_
 
 #include <iostream>
 #include <math.h>
@@ -27,4 +27,4 @@ private:
 
 } /* namespace motion_planning */
 
-#endif /* INCLUDE_JACOBIAN_H_ */
+#endif /* INCLUDE_MOTIONPLANNING_JACOBIAN_H_ */

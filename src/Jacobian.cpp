@@ -5,7 +5,7 @@
  *      Author: abhishek
  */
 
-#include "Jacobian.h"
+#include <MotionPlanning/Jacobian.h>
 
 namespace motion_planning {
 

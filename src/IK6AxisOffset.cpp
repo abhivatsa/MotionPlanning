@@ -5,7 +5,7 @@
  *      Author: abhishek
  */
 
-#include "IK6AxisOffset.h"
+#include <MotionPlanning/IK6AxisOffset.h>
 
 namespace motion_planning {
 

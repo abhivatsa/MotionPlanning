@@ -1,12 +1,12 @@
 /*
- * IK6AxisInline.h
+ * IK6AxisOffset.h
  *
  *  Created on: 22-Dec-2022
  *      Author: abhishek
  */
 
-#ifndef INCLUDE_IK6AXISINLINE_H_
-#define INCLUDE_IK6AXISINLINE_H_
+#ifndef INCLUDE_MOTIONPLANNING_IK6AXISOFFSET_H_
+#define INCLUDE_MOTIONPLANNING_IK6AXISOFFSET_H_
 
 #include <iostream>
 #include <math.h>
@@ -15,17 +15,18 @@
 
 namespace motion_planning {
 
-class IK6AxisInline {
+class IK6AxisOffset {
 public:
-	IK6AxisInline();
-	virtual ~IK6AxisInline();
+	IK6AxisOffset();
+	virtual ~IK6AxisOffset();
 	int computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient,
 	    		std::vector<double>& current_joint_val, std::vector<double>& joint_val);
 
 private:
-	double l0, l1, l2, l3;
+	double d1, d4, d5, d6, a2, a3;
+
 };
 
 } /* namespace motion_planning */
 
-#endif /* INCLUDE_IK6AXISINLINE_H_ */
+#endif /* INCLUDE_MOTIONPLANNING_IK6AXISOFFSET_H_ */
