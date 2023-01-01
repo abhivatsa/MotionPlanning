@@ -7,19 +7,22 @@ CPP_SRCS += \
 ../src/ForwardKinematics.cpp \
 ../src/IK6AxisInline.cpp \
 ../src/IK6AxisOffset.cpp \
-../src/Jacobian.cpp 
+../src/Jacobian.cpp \
+../src/RecursiveNewtonEuler.cpp 
 
 CPP_DEPS += \
 ./src/ForwardKinematics.d \
 ./src/IK6AxisInline.d \
 ./src/IK6AxisOffset.d \
-./src/Jacobian.d 
+./src/Jacobian.d \
+./src/RecursiveNewtonEuler.d 
 
 OBJS += \
 ./src/ForwardKinematics.o \
 ./src/IK6AxisInline.o \
 ./src/IK6AxisOffset.o \
-./src/Jacobian.o 
+./src/Jacobian.o \
+./src/RecursiveNewtonEuler.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -34,7 +37,7 @@ src/%.o: ../src/%.cpp src/subdir.mk
 clean: clean-src
 
 clean-src:
-	-$(RM) ./src/ForwardKinematics.d ./src/ForwardKinematics.o ./src/IK6AxisInline.d ./src/IK6AxisInline.o ./src/IK6AxisOffset.d ./src/IK6AxisOffset.o ./src/Jacobian.d ./src/Jacobian.o
+	-$(RM) ./src/ForwardKinematics.d ./src/ForwardKinematics.o ./src/IK6AxisInline.d ./src/IK6AxisInline.o ./src/IK6AxisOffset.d ./src/IK6AxisOffset.o ./src/Jacobian.d ./src/Jacobian.o ./src/RecursiveNewtonEuler.d ./src/RecursiveNewtonEuler.o
 
 .PHONY: clean-src
 
