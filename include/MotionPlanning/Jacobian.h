@@ -17,12 +17,15 @@ namespace motion_planning {
 
 class Jacobian{
 public:
-	Jacobian();
+	Jacobian(int robot_type);
 	virtual ~Jacobian();
 	int computeJacobian(std::vector<double> joint_angles, Eigen::MatrixXd& jacob_mat);
+	int computeJacobianOffset(std::vector<double> joint_angles, Eigen::MatrixXd& jacob_mat);
+	int computeJacobianInline(std::vector<double> joint_angles, Eigen::MatrixXd& jacob_mat);
 
 private:
 	std::vector<double> alpha, a, d, theta;
+	int robot_type_;
 };
 
 } /* namespace motion_planning */
