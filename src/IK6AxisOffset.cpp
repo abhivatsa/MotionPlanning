@@ -191,6 +191,26 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
     }
 
+    double least_sq_dist = std::numeric_limits<int>::max();
+
+	joint_val = current_joint_val;
+
+	for (size_t ctr = 0; ctr < sol_final.size(); ctr++){
+
+		double sq_dist = 0;
+		std::vector<double> local_sol = sol_final[ctr];
+
+		for (size_t col_ctr =0; col_ctr < local_sol.size(); col_ctr++){
+			sq_dist = sq_dist + (local_sol[col_ctr] - current_joint_val[col_ctr])*(local_sol[col_ctr] - current_joint_val[col_ctr]);
+		}
+
+		if (sq_dist < least_sq_dist){
+			least_sq_dist = sq_dist;
+			joint_val = local_sol;
+		}
+
+	}
+
     return 0;
 
 }
