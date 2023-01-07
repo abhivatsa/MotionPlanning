@@ -20,7 +20,7 @@ public:
 	IK6AxisInline();
 	virtual ~IK6AxisInline();
 	int computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient,
-	    		std::vector<double>& current_joint_val, std::vector<double>& joint_val);
+			std::vector<double>& current_joint_val, std::vector<double>& joint_val);
 
 private:
 	double l0, l1, l2, l3;

@@ -56,7 +56,7 @@ RecursiveNewtonEuler::~RecursiveNewtonEuler() {
 }
 
 int RecursiveNewtonEuler::computeTorque(std::vector<double> joint_pos, std::vector<double> joint_vel, std::vector<double> joint_acc,
-			std::vector<double>& joint_torque){
+		std::vector<double>& joint_torque){
 
 	Eigen::Matrix3d rotation_mat;
 	Eigen::Vector3d pos_vec, z_dir;
@@ -84,7 +84,7 @@ int RecursiveNewtonEuler::computeTorque(std::vector<double> joint_pos, std::vect
 
 			omega_next = rotation_mat * omega + joint_vel[joint_ctr] * z_dir;
 			omega_dot_next = rotation_mat * omega_dot + rotation_mat * ( omega.cross(z_dir) )
-					+ joint_acc[joint_ctr] * z_dir;
+							+ joint_acc[joint_ctr] * z_dir;
 			vel_dot_next = rotation_mat * ( omega_dot.cross(pos_vec) + omega.cross( omega.cross( pos_vec ) ) + vel_dot );
 
 			Eigen::Vector3d vel_dot_com = omega_dot_next.cross(pos_com[joint_ctr]) + omega_next.cross( omega_next.cross( pos_com[joint_ctr]) ) + vel_dot;
@@ -124,14 +124,14 @@ int RecursiveNewtonEuler::computeTorque(std::vector<double> joint_pos, std::vect
 }
 
 int RecursiveNewtonEuler::computeTransformationMat(double joint_pos, int joint_num, Eigen::Matrix3d& rotation_mat,
-			Eigen::Vector3d& pos_mat){
+		Eigen::Vector3d& pos_mat){
 
 	rotation_mat.setIdentity(3, 3);
 	pos_mat.setZero(3);
 
 	rotation_mat << cos(joint_pos + theta[joint_num]), -sin(joint_pos + theta[joint_num]), 0,
-					sin(joint_pos + theta[joint_num])*cos(alpha[joint_num]), cos(joint_pos + theta[joint_num])*cos(alpha[joint_num]), -sin(alpha[joint_num]),
-					sin(joint_pos + theta[joint_num])*sin(alpha[joint_num]), cos(joint_pos + theta[joint_num])*sin(alpha[joint_num]), cos(alpha[joint_num]);
+			sin(joint_pos + theta[joint_num])*cos(alpha[joint_num]), cos(joint_pos + theta[joint_num])*cos(alpha[joint_num]), -sin(alpha[joint_num]),
+			sin(joint_pos + theta[joint_num])*sin(alpha[joint_num]), cos(joint_pos + theta[joint_num])*sin(alpha[joint_num]), cos(alpha[joint_num]);
 
 	pos_mat << a[joint_num], -sin(alpha[joint_num])*d[joint_num], cos(alpha[joint_num])*d[joint_num];
 

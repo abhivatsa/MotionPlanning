@@ -17,8 +17,8 @@ ForwardKinematics::ForwardKinematics() {
 
 	double a2, a3, d1, d4, d5, d6;
 
-	a2 = 0.24355;
-	a3 = 0.2132;
+	a2 = -0.24355;
+	a3 = -0.2132;
 	d1 = 0.15185;
 	d4 = 0.13105;
 	d5 = 0.08535;
@@ -33,30 +33,6 @@ ForwardKinematics::ForwardKinematics() {
 
 ForwardKinematics::~ForwardKinematics() {
 	// TODO Auto-generated destructor stub
-}
-
-int ForwardKinematics::getAlpha(std::vector<double>& alpha_vec){
-	alpha_vec.resize(alpha.size());
-	alpha_vec = alpha;
-	return 0;
-}
-
-int ForwardKinematics::getA(std::vector<double>& a_vec){
-	a_vec.resize(a.size());
-	a_vec = a;
-	return 0;
-}
-
-int ForwardKinematics::getD(std::vector<double>& d_vec){
-	d_vec.resize(d.size());
-	d_vec = d;
-	return 0;
-}
-
-int ForwardKinematics::getTheta(std::vector<double>& theta_vec){
-	theta_vec.resize(theta.size());
-	theta_vec = theta;
-	return 0;
 }
 
 int ForwardKinematics::computeFK(std::vector<double> joint_angles, Eigen::MatrixXd& trans_mat){

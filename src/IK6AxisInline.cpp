@@ -22,7 +22,7 @@ IK6AxisInline::~IK6AxisInline() {
 }
 
 int IK6AxisInline::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient,
-    		std::vector<double>& current_joint_val, std::vector<double>& joint_val){
+		std::vector<double>& current_joint_val, std::vector<double>& joint_val){
 
 	Eigen::Vector3d pos_wrist_eef, pose_base_shoulder;
 
@@ -72,8 +72,8 @@ int IK6AxisInline::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 		Eigen::Matrix3d rot_mat_03;
 
 		rot_mat_03 << cos(th1)*cos(th2+th3), -sin(th1), cos(th1)*sin(th2+th3),
-					sin(th1)*cos(th2+th3),  cos(th1), sin(th1)*sin(th2+th3),
-					-sin(th2+th3), 0, cos(th2+th3);
+				sin(th1)*cos(th2+th3),  cos(th1), sin(th1)*sin(th2+th3),
+				-sin(th2+th3), 0, cos(th2+th3);
 
 		Eigen::Matrix3d rot_mat_46 = rot_mat_03.transpose()*eef_orient;
 

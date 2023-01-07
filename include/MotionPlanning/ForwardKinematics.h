@@ -19,10 +19,16 @@ class ForwardKinematics {
 public:
 	ForwardKinematics();
 	virtual ~ForwardKinematics();
-	int getAlpha(std::vector<double>& alpha_vec);
-	int getA(std::vector<double>& a_vec);
-	int getD(std::vector<double>& d_vec);
-	int getTheta(std::vector<double>& theta_vec);
+
+	/**
+	 * Function to compute Forward kinematics given the joint angles. basically it would provide you
+	 * end-effector location based on joint angles
+	 *
+	 * @param joint_angles vector of Joint angles
+	 * @param trans_mat a 4X4 transformation matrix returning end effector position and orientation
+	 *
+	 * return 0 if successful
+	 */
 	int computeFK(std::vector<double> joint_angles, Eigen::MatrixXd& trans_mat);
 
 private:
