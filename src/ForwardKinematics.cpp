@@ -69,10 +69,12 @@ int ForwardKinematics::computeFK(std::vector<double> joint_angles, Eigen::Matrix
 	T_glo.setIdentity(4, 4);
 
 	for (size_t ctr = 0; ctr < alpha.size(); ctr++){
-		T_loc << cos(theta[ctr] + joint_angles[ctr]), -sin(theta[ctr] + joint_angles[ctr]), 0, a[0],
+
+		T_loc << cos(theta[ctr] + joint_angles[ctr]), -sin(theta[ctr] + joint_angles[ctr]), 0, a[ctr],
 				sin(theta[ctr] + joint_angles[ctr])*cos(alpha[ctr]), cos(theta[ctr] + joint_angles[ctr])*cos(alpha[ctr]), -sin(alpha[ctr]), -d[ctr]*sin(alpha[ctr]),
 				sin(theta[ctr] + joint_angles[ctr])*sin(alpha[ctr]), cos(theta[ctr] + joint_angles[ctr])*sin(alpha[ctr]), cos(alpha[ctr]), d[ctr]*cos(alpha[ctr]),
 				0, 0, 0, 1;
+
 		T_glo = T_glo * T_loc;
 	}
 
