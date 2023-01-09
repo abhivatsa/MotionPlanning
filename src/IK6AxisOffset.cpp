@@ -49,10 +49,24 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	des_pos = eef_pos - d6*eef_orient*z_col;
 
+	std::cout<<"des_pos : "<<des_pos<<std::endl;
+
+//	std::cout<<"eef_pos : "<<eef_pos<<"\n eef_orient : "<<eef_orient<<" \n des_pos : "<<des_pos<<std::endl;
+
 	double R = sqrt(des_pos(0)*des_pos(0) + des_pos(1)*des_pos(1));
+
+	std::cout<<"asin(d4/R) : "<<asin(d4/R)<<std::endl;
+	std::cout<<"atan2 term : "<<atan2(des_pos(1), des_pos(0))<<std::endl;
+
+//	double th1_1, th1_2;
+
+//	th1_1 = atan2(des_pos(1), des_pos(0)) + acos(d4/R) + M_PI/2;
+//	th1_2 = atan2(des_pos(1), des_pos(0)) - acos(d4/R) + M_PI/2;
 
 	double th1_1 = atan2(des_pos(1), des_pos(0)) + asin(d4/R);
 	double th1_2 = atan2(des_pos(1), des_pos(0)) - asin(d4/R) + M_PI;
+
+	std::cout<< "th1_1 : "<<th1_1<<", th1_2 : "<<th1_2<<std::endl;
 
 	if (fabs(th1_1) < 0.00001)
 		th1_1 = 0;
@@ -78,7 +92,9 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	// computing th5 corresponding to th1_1
 
-	double th5_ratio = (des_pos(0)*sin(th1_1) - des_pos(1)*cos(th1_1) - d4)/d6;
+	double th5_ratio = (eef_pos(0)*sin(th1_1) - eef_pos(1)*cos(th1_1) - d4)/d6;
+
+	std::cout<<"th5_ratio : "<<th5_ratio<<std::endl;
 
 	if ( fabs( fabs(th5_ratio) - 1) < 0.0001)
 		th5_ratio = th5_ratio/fabs(th5_ratio)*1;
@@ -104,7 +120,12 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	// computing th5 corresponding to th1_2
 
-	th5_ratio = (des_pos(0)*sin(th1_2) - des_pos(1)*cos(th1_2) - d4)/d6;
+	th5_ratio = (eef_pos(0)*sin(th1_2) - eef_pos(1)*cos(th1_2) - d4)/d6;
+
+//	std::cout<<" des_pos(0) : "<<des_pos(0)<<", des_pos(1): "<<des_pos(1)<<std::endl;
+//	std::cout<<"term 1 : "<<des_pos(0)*sin(th1_2)<<", term 2 : "<< des_pos(1)*cos(th1_2)<<", d4 : "<<d4<<", d6 : "<<d6<<std::endl;
+//
+//	std::cout<<"th1_2 : "<<th1_2<<", th5_ratio : "<<th5_ratio<<std::endl;
 
 	if ( fabs( fabs(th5_ratio) - 1) < 0.0001)
 		th5_ratio = th5_ratio/fabs(th5_ratio)*1;
@@ -130,7 +151,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	// computing th5 corresponding to th1_3
 
-	th5_ratio = (des_pos(0)*sin(th1_3) - des_pos(1)*cos(th1_3) - d4)/d6;
+	th5_ratio = (eef_pos(0)*sin(th1_3) - eef_pos(1)*cos(th1_3) - d4)/d6;
 
 	if ( fabs( fabs(th5_ratio) - 1) < 0.0001)
 		th5_ratio = th5_ratio/fabs(th5_ratio)*1;
@@ -156,7 +177,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	// computing th5 corresponding to th1_4
 
-	th5_ratio = (des_pos(0)*sin(th1_4) - des_pos(1)*cos(th1_4) - d4)/d6;
+	th5_ratio = (eef_pos(0)*sin(th1_4) - eef_pos(1)*cos(th1_4) - d4)/d6;
 
 	if ( fabs( fabs(th5_ratio) - 1) < 0.0001)
 		th5_ratio = th5_ratio/fabs(th5_ratio)*1;
@@ -185,97 +206,111 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	// Computing th6 for various value of th1_1 and th5_1, th5_2, th5_5, th5_6
 
-	if (fabs(sin(th5_1)) < 1e-5)
-		th6_1 = 0;
-	else
-		th6_1 = atan2((-eef_orient(0,1)*sin(th1_1) + eef_orient(1,1)*cos(th1_1))/sin(th5_1), -(-eef_orient(0,0)*sin(th1_1) + eef_orient(1,0)*cos(th1_1))/sin(th5_1));
+	double num_th6_1, num_th6_2;
 
-	if (fabs(sin(th5_2)) < 1e-5)
-		th6_2 = 0;
-	else
-		th6_2 = atan2((-eef_orient(0,1)*sin(th1_1) + eef_orient(1,1)*cos(th1_1))/sin(th5_2), -(-eef_orient(0,0)*sin(th1_1) + eef_orient(1,0)*cos(th1_1))/sin(th5_2));
+	num_th6_1 = (-eef_orient(0,1)*sin(th1_1) + eef_orient(1,1)*cos(th1_1));
+	num_th6_2 = (-eef_orient(0,0)*sin(th1_1) + eef_orient(1,0)*cos(th1_1));
 
-	if (fabs(sin(th5_5)) < 1e-5)
-		th6_5 = 0;
+	if ( fabs(sin(th5_1)) < 1e-5 || ( fabs(num_th6_1) < 1e-5 && fabs(num_th6_2) < 1e-5) )
+		th6_1 = current_joint_val[5];
 	else
-		th6_2 = atan2((-eef_orient(0,1)*sin(th1_1) + eef_orient(1,1)*cos(th1_1))/sin(th5_5), -(-eef_orient(0,0)*sin(th1_1) + eef_orient(1,0)*cos(th1_1))/sin(th5_5));
+		th6_1 = atan2( num_th6_1/sin(th5_1), -num_th6_2/sin(th5_1) );
 
-	if (fabs(sin(th5_6)) < 1e-5)
-		th6_6 = 0;
+	if (fabs(sin(th5_2)) < 1e-5 || ( fabs(num_th6_1) < 1e-5 && fabs(num_th6_2) < 1e-5) )
+		th6_2 = current_joint_val[5];
 	else
-		th6_6 = atan2((-eef_orient(0,1)*sin(th1_1) + eef_orient(1,1)*cos(th1_1))/sin(th5_6), -(-eef_orient(0,0)*sin(th1_1) + eef_orient(1,0)*cos(th1_1))/sin(th5_6));
+		th6_2 = atan2( num_th6_1/sin(th5_2), -num_th6_2/sin(th5_2) );
+
+	if (fabs(sin(th5_5)) < 1e-5 || ( fabs(num_th6_1) < 1e-5 && fabs(num_th6_2) < 1e-5) )
+		th6_5 = current_joint_val[5];
+	else
+		th6_5 = atan2( num_th6_1/sin(th5_5), -num_th6_2/sin(th5_5));
+
+	if (fabs(sin(th5_6)) < 1e-5 || ( fabs(num_th6_1) < 1e-5 && fabs(num_th6_2) < 1e-5) )
+		th6_6 = current_joint_val[5];
+	else
+		th6_6 = atan2( num_th6_1/sin(th5_6), -num_th6_2/sin(th5_6));
 
 
 	// Computing th6 for various value of th1_2 and th5_3, th5_4, th5_7, th5_8
 
-	if (fabs(sin(th5_3)) < 1e-5)
-		th6_3 = 0;
-	else
-		th6_3 = atan2((-eef_orient(0,1)*sin(th1_2) + eef_orient(1,1)*cos(th1_2))/sin(th5_3), -(-eef_orient(0,0)*sin(th1_2) + eef_orient(1,0)*cos(th1_2))/sin(th5_3));
+	num_th6_1 = (-eef_orient(0,1)*sin(th1_2) + eef_orient(1,1)*cos(th1_2));
+	num_th6_2 = (-eef_orient(0,0)*sin(th1_2) + eef_orient(1,0)*cos(th1_2));
 
-	if (fabs(sin(th5_4)) < 1e-5)
-		th6_4 = 0;
+	if (fabs(sin(th5_3)) < 1e-5 || ( fabs(num_th6_1) < 1e-5 && fabs(num_th6_2) < 1e-5) )
+		th6_3 = current_joint_val[5];
 	else
-		th6_4 = atan2((-eef_orient(0,1)*sin(th1_2) + eef_orient(1,1)*cos(th1_2))/sin(th5_4), -(-eef_orient(0,0)*sin(th1_2) + eef_orient(1,0)*cos(th1_2))/sin(th5_4));
+		th6_3 = atan2( num_th6_1/sin(th5_3), -num_th6_2/sin(th5_3) );
 
-	if (fabs(sin(th5_7)) < 1e-5)
-		th6_7 = 0;
+	if (fabs(sin(th5_4)) < 1e-5 || ( fabs(num_th6_1) < 1e-5 && fabs(num_th6_2) < 1e-5))
+		th6_4 = current_joint_val[5];
 	else
-		th6_7 = atan2((-eef_orient(0,1)*sin(th1_2) + eef_orient(1,1)*cos(th1_2))/sin(th5_7), -(-eef_orient(0,0)*sin(th1_2) + eef_orient(1,0)*cos(th1_2))/sin(th5_7));
+		th6_4 = atan2(num_th6_1/sin(th5_4), -num_th6_2/sin(th5_4));
 
-	if (fabs(sin(th5_8)) < 1e-5)
-		th6_8 = 0;
+	if (fabs(sin(th5_7)) < 1e-5 || ( fabs(num_th6_1) < 1e-5 && fabs(num_th6_2) < 1e-5))
+		th6_7 = current_joint_val[5];
 	else
-		th6_8 = atan2((-eef_orient(0,1)*sin(th1_2) + eef_orient(1,1)*cos(th1_2))/sin(th5_8), -(-eef_orient(0,0)*sin(th1_2) + eef_orient(1,0)*cos(th1_2))/sin(th5_8));
+		th6_7 = atan2( num_th6_1/sin(th5_7), -num_th6_2/sin(th5_7) );
+
+	if (fabs(sin(th5_8)) < 1e-5 || ( fabs(num_th6_1) < 1e-5 && fabs(num_th6_2) < 1e-5))
+		th6_8 = current_joint_val[5];
+	else
+		th6_8 = atan2( num_th6_1/sin(th5_8), -num_th6_2/sin(th5_8));
 
 
 	// Computing th6 for various value of th1_3 and th5_9, th5_10, th5_11, th5_12
 
+	num_th6_1 = (-eef_orient(0,1)*sin(th1_3) + eef_orient(1,1)*cos(th1_3));
+	num_th6_2 = (-eef_orient(0,0)*sin(th1_3) + eef_orient(1,0)*cos(th1_3));
+
 	if (fabs(sin(th5_9)) < 1e-5)
-		th6_9 = 0;
+		th6_9 = current_joint_val[5];
 	else
-		th6_9 = atan2((-eef_orient(0,1)*sin(th1_3) + eef_orient(1,1)*cos(th1_3))/sin(th5_9), -(-eef_orient(0,0)*sin(th1_3) + eef_orient(1,0)*cos(th1_3))/sin(th5_9));
+		th6_9 = atan2( num_th6_1/sin(th5_9), -num_th6_2/sin(th5_9) );
 
 	if (fabs(sin(th5_10)) < 1e-5)
-		th6_10 = 0;
+		th6_10 = current_joint_val[5];
 	else
-		th6_10 = atan2((-eef_orient(0,1)*sin(th1_3) + eef_orient(1,1)*cos(th1_3))/sin(th5_10), -(-eef_orient(0,0)*sin(th1_3) + eef_orient(1,0)*cos(th1_3))/sin(th5_10));
+		th6_10 = atan2( num_th6_1/sin(th5_10), -num_th6_2/sin(th5_10));
 
 	if (fabs(sin(th5_11)) < 1e-5)
-		th6_11 = 0;
+		th6_11 = current_joint_val[5];
 	else
-		th6_11 = atan2((-eef_orient(0,1)*sin(th1_3) + eef_orient(1,1)*cos(th1_3))/sin(th5_11), -(-eef_orient(0,0)*sin(th1_3) + eef_orient(1,0)*cos(th1_3))/sin(th5_11));
+		th6_11 = atan2( num_th6_1/sin(th5_11), -num_th6_2/sin(th5_11) );
 
 	if (fabs(sin(th5_12)) < 1e-5)
-		th6_12 = 0;
+		th6_12 = current_joint_val[5];
 	else
-		th6_12 = atan2((-eef_orient(0,1)*sin(th1_3) + eef_orient(1,1)*cos(th1_3))/sin(th5_12), -(-eef_orient(0,0)*sin(th1_3) + eef_orient(1,0)*cos(th1_3))/sin(th5_12));
+		th6_12 = atan2( num_th6_1/sin(th5_12), -num_th6_2/sin(th5_12) );
 
 	// Computing th6 for various value of th1_4 and th5_13, th5_14, th5_15, th5_16
 
+	num_th6_1 = (-eef_orient(0,1)*sin(th1_4) + eef_orient(1,1)*cos(th1_4));
+	num_th6_2 = (-eef_orient(0,0)*sin(th1_4) + eef_orient(1,0)*cos(th1_4));
+
 	if (fabs(sin(th5_13)) < 1e-5)
-		th6_13 = 0;
+		th6_13 = current_joint_val[5];
 	else
-		th6_13 = atan2((-eef_orient(0,1)*sin(th1_4) + eef_orient(1,1)*cos(th1_4))/sin(th5_13), -(-eef_orient(0,0)*sin(th1_4) + eef_orient(1,0)*cos(th1_4))/sin(th5_13));
+		th6_13 = atan2( num_th6_1/sin(th5_13), -num_th6_2/sin(th5_13) );
 
 	if (fabs(sin(th5_14)) < 1e-5)
-		th6_14 = 0;
+		th6_14 = current_joint_val[5];
 	else
-		th6_14 = atan2((-eef_orient(0,1)*sin(th1_4) + eef_orient(1,1)*cos(th1_4))/sin(th5_14), -(-eef_orient(0,0)*sin(th1_4) + eef_orient(1,0)*cos(th1_4))/sin(th5_14));
+		th6_14 = atan2( num_th6_1/sin(th5_14), -num_th6_2/sin(th5_14) );
 
 	if (fabs(sin(th5_15)) < 1e-5)
-		th6_15 = 0;
+		th6_15 = current_joint_val[5];
 	else
-		th6_15 = atan2((-eef_orient(0,1)*sin(th1_4) + eef_orient(1,1)*cos(th1_4))/sin(th5_15), -(-eef_orient(0,0)*sin(th1_4) + eef_orient(1,0)*cos(th1_4))/sin(th5_15));
+		th6_15 = atan2( num_th6_1/sin(th5_15), -num_th6_2/sin(th5_15) );
 
 	if (fabs(sin(th5_16)) < 1e-5)
-		th6_16 = 0;
+		th6_16 = current_joint_val[5];
 	else
-		th6_16 = atan2((-eef_orient(0,1)*sin(th1_4) + eef_orient(1,1)*cos(th1_4))/sin(th5_16), -(-eef_orient(0,0)*sin(th1_4) + eef_orient(1,0)*cos(th1_4))/sin(th5_16));
+		th6_16 = atan2( num_th6_1/sin(th5_16), -num_th6_2/sin(th5_16));
 
 	std::vector<std::vector<double>> sol_init, sol_final;
 	sol_init.resize(16);
-	sol_final.resize(128);
+	sol_final.resize(256);
 
 	sol_init[0] = {th1_1, th5_1, th6_1};
 	sol_init[1] = {th1_1, th5_2, th6_2};
@@ -422,7 +457,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		T34 = T23.inverse()*T12.inverse()*T14;
 
-		double th4_1 = atan2(-T34(1,2), T34(1,1));
+		double th4_1 = atan2(-T34(0,1), T34(0,0));
 
 		// Computing th4_2 wrt th2_2 and th3_2
 
@@ -438,7 +473,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		T34 = T23.inverse()*T12.inverse()*T14;
 
-		double th4_2 = atan2(-T34(1,2), T34(1,1));
+		double th4_2 = atan2(-T34(0,1), T34(0,0));
 
 		// Computing th4_3 wrt th2_3 and th3_3
 
@@ -454,7 +489,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		T34 = T23.inverse()*T12.inverse()*T14;
 
-		double th4_3 = atan2(-T34(1,2), T34(1,1));
+		double th4_3 = atan2(-T34(0,1), T34(0,0));
 
 		// Computing th4_4 wrt th2_4 and th3_4
 
@@ -470,7 +505,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		T34 = T23.inverse()*T12.inverse()*T14;
 
-		double th4_4 = atan2(-T34(1,2), T34(1,1));
+		double th4_4 = atan2(-T34(0,1), T34(0,0));
 
 		// Computing th4_5 wrt th2_5 and th3_1
 
@@ -486,7 +521,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		T34 = T23.inverse()*T12.inverse()*T14;
 
-		double th4_5 = atan2(-T34(1,2), T34(1,1));
+		double th4_5 = atan2(-T34(0,1), T34(0,0));
 
 		// Computing th4_6 wrt th2_6 and th3_2
 
@@ -502,7 +537,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		T34 = T23.inverse()*T12.inverse()*T14;
 
-		double th4_6 = atan2(-T34(1,2), T34(1,1));
+		double th4_6 = atan2(-T34(0,1), T34(0,0));
 
 		// Computing th4_7 wrt th2_7 and th3_3
 
@@ -518,7 +553,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		T34 = T23.inverse()*T12.inverse()*T14;
 
-		double th4_7 = atan2(-T34(1,2), T34(1,1));
+		double th4_7 = atan2(-T34(0,1), T34(0,0));
 
 		// Computing th4_8 wrt th2_8 and th3_4
 
@@ -534,24 +569,109 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		T34 = T23.inverse()*T12.inverse()*T14;
 
-		double th4_8 = atan2(-T34(1,2), T34(1,1));
+		double th4_8 = atan2(-T34(0,1), T34(0,0));
 
-		sol_final[8*ctr] = {th1, th2_1, th3_1, th4_1, th5, th6};
-		sol_final[8*ctr+1] = {th1, th2_5, th3_1, th4_5, th5, th6};
-		sol_final[8*ctr+2] = {th1, th2_2, th3_2, th4_2, th5, th6};
-		sol_final[8*ctr+3] = {th1, th2_6, th3_2, th4_6, th5, th6};
-		sol_final[8*ctr+4] = {th1, th2_3, th3_3, th4_3, th5, th6};
-		sol_final[8*ctr+5] = {th1, th2_7, th3_3, th4_7, th5, th6};
-		sol_final[8*ctr+6] = {th1, th2_4, th3_4, th4_4, th5, th6};
-		sol_final[8*ctr+7] = {th1, th2_8, th3_4, th4_8, th5, th6};
+		double th4_9, th4_10, th4_11, th4_12, th4_13, th4_14, th4_15, th4_16;
+
+		// th4_9 depends on th4_1
+		if (th4_1 > 0 && th4_1 < M_PI){
+			th4_9 = - 2*M_PI + th4_1;
+		}
+		else{
+			th4_9 = 2*M_PI + th4_1;
+		}
+
+		// th4_10 depends on th4_5
+		if (th4_5 > 0 && th4_5 < M_PI){
+			th4_10 = - 2*M_PI + th4_5;
+		}
+		else{
+			th4_10 = 2*M_PI + th4_5;
+		}
+
+		// th4_11 depends on th4_2
+		if (th4_2 > 0 && th4_2 < M_PI){
+			th4_11 = - 2*M_PI + th4_2;
+		}
+		else{
+			th4_11 = 2*M_PI + th4_2;
+		}
+
+		// th4_12 depends on th4_6
+		if (th4_6 > 0 && th4_6 < M_PI){
+			th4_12 = - 2*M_PI + th4_6;
+		}
+		else{
+			th4_12 = 2*M_PI + th4_6;
+		}
+
+		// th4_13 depends on th4_3
+		if (th4_3 > 0 && th4_3 < M_PI){
+			th4_13 = - 2*M_PI + th4_3;
+		}
+		else{
+			th4_13 = 2*M_PI + th4_3;
+		}
+
+		// th4_14 depends on th4_7
+		if (th4_7 > 0 && th4_7 < M_PI){
+			th4_14 = - 2*M_PI + th4_7;
+		}
+		else{
+			th4_14 = 2*M_PI + th4_7;
+		}
+
+		// th4_15 depends on th4_4
+		if (th4_4 > 0 && th4_4 < M_PI){
+			th4_15 = - 2*M_PI + th4_4;
+		}
+		else{
+			th4_15 = 2*M_PI + th4_4;
+		}
+
+		// th4_16 depends on th4_8
+		if (th4_8 > 0 && th4_8 < M_PI){
+			th4_16 = - 2*M_PI + th4_8;
+		}
+		else{
+			th4_16 = 2*M_PI + th4_8;
+		}
+
+
+		sol_final[16*ctr] = {th1, th2_1, th3_1, th4_1, th5, th6};
+		sol_final[16*ctr+1] = {th1, th2_5, th3_1, th4_5, th5, th6};
+		sol_final[16*ctr+2] = {th1, th2_2, th3_2, th4_2, th5, th6};
+		sol_final[16*ctr+3] = {th1, th2_6, th3_2, th4_6, th5, th6};
+		sol_final[16*ctr+4] = {th1, th2_3, th3_3, th4_3, th5, th6};
+		sol_final[16*ctr+5] = {th1, th2_7, th3_3, th4_7, th5, th6};
+		sol_final[16*ctr+6] = {th1, th2_4, th3_4, th4_4, th5, th6};
+		sol_final[16*ctr+7] = {th1, th2_8, th3_4, th4_8, th5, th6};
+		sol_final[16*ctr+8] = {th1, th2_1, th3_1, th4_9, th5, th6};
+		sol_final[16*ctr+9] = {th1, th2_5, th3_1, th4_10, th5, th6};
+		sol_final[16*ctr+10] = {th1, th2_2, th3_2, th4_11, th5, th6};
+		sol_final[16*ctr+11] = {th1, th2_6, th3_2, th4_12, th5, th6};
+		sol_final[16*ctr+12] = {th1, th2_3, th3_3, th4_13, th5, th6};
+		sol_final[16*ctr+13] = {th1, th2_7, th3_3, th4_14, th5, th6};
+		sol_final[16*ctr+14] = {th1, th2_4, th3_4, th4_15, th5, th6};
+		sol_final[16*ctr+15] = {th1, th2_8, th3_4, th4_16, th5, th6};
+
+//		if (ctr == 8){
+//			std::cout<<"j1 : "<<sol_final[8*ctr][0]<<", j2 : "<<sol_final[8*ctr][1]<<" j3 : "<<sol_final[8*ctr][2]<<" j4 : "<<sol_final[8*ctr][3]<<" j5 : "<<sol_final[8*ctr][4]<<" j6 : "<<sol_final[8*ctr][5]<<std::endl;
+//			std::cout<<"j1 : "<<sol_final[8*ctr+1][0]<<", j2 : "<<sol_final[8*ctr+1][1]<<" j3 : "<<sol_final[8*ctr+1][2]<<" j4 : "<<sol_final[8*ctr+1][3]<<" j5 : "<<sol_final[8*ctr+1][4]<<" j6 : "<<sol_final[8*ctr+1][5]<<std::endl;
+//			std::cout<<"j1 : "<<sol_final[8*ctr+2][0]<<", j2 : "<<sol_final[8*ctr+2][1]<<" j3 : "<<sol_final[8*ctr+2][2]<<" j4 : "<<sol_final[8*ctr+2][3]<<" j5 : "<<sol_final[8*ctr+2][4]<<" j6 : "<<sol_final[8*ctr+2][5]<<std::endl;
+//			std::cout<<"j1 : "<<sol_final[8*ctr+3][0]<<", j2 : "<<sol_final[8*ctr+3][1]<<" j3 : "<<sol_final[8*ctr+3][2]<<" j4 : "<<sol_final[8*ctr+3][3]<<" j5 : "<<sol_final[8*ctr+3][4]<<" j6 : "<<sol_final[8*ctr+3][5]<<std::endl;
+//			std::cout<<"j1 : "<<sol_final[8*ctr+4][0]<<", j2 : "<<sol_final[8*ctr+4][1]<<" j3 : "<<sol_final[8*ctr+4][2]<<" j4 : "<<sol_final[8*ctr+4][3]<<" j5 : "<<sol_final[8*ctr+4][4]<<" j6 : "<<sol_final[8*ctr+4][5]<<std::endl;
+//			std::cout<<"j1 : "<<sol_final[8*ctr+5][0]<<", j2 : "<<sol_final[8*ctr+5][1]<<" j3 : "<<sol_final[8*ctr+5][2]<<" j4 : "<<sol_final[8*ctr+5][3]<<" j5 : "<<sol_final[8*ctr+5][4]<<" j6 : "<<sol_final[8*ctr+5][5]<<std::endl;
+//			std::cout<<"j1 : "<<sol_final[8*ctr+6][0]<<", j2 : "<<sol_final[8*ctr+6][1]<<" j3 : "<<sol_final[8*ctr+6][2]<<" j4 : "<<sol_final[8*ctr+6][3]<<" j5 : "<<sol_final[8*ctr+6][4]<<" j6 : "<<sol_final[8*ctr+6][5]<<std::endl;
+//			std::cout<<"j1 : "<<sol_final[8*ctr+7][0]<<", j2 : "<<sol_final[8*ctr+7][1]<<" j3 : "<<sol_final[8*ctr+7][2]<<" j4 : "<<sol_final[8*ctr+7][3]<<" j5 : "<<sol_final[8*ctr+7][4]<<" j6 : "<<sol_final[8*ctr+7][5]<<std::endl;
+//
+//		}
 
 	}
 
 	double least_sq_dist = std::numeric_limits<int>::max();
 
 	joint_val = current_joint_val;
-
-	std::cout<<"final soultion size : "<<sol_final.size()<<std::endl;
 
 	for (size_t ctr = 0; ctr < sol_final.size(); ctr++){
 
@@ -563,10 +683,14 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 		}
 
 		if (sq_dist < least_sq_dist){
-			std::cout<<"sq_dist : "<<sq_dist<<std::endl;
-			for (int count = 0; count < 6; count++){
-				std::cout<<"local_sol : "<<count<<" : "<<local_sol[count]<<std::endl;
-			}
+//			std::cout<<"ctr : "<<ctr<<", sq_dist : "<<sq_dist<<std::endl;
+//			double dist = 0;
+//			for (int count = 0; count < 6; count++){
+//				std::cout<<"locval_sol : "<<local_sol[ctr]<<std::endl;
+//				std::cout<<"local_sol : "<<count<<" : "<<local_sol[count]<<", dist mod : "<<local_sol[count] - current_joint_val[count]<<", current_joint_val : "<<current_joint_val[count]<<std::endl;
+//				dist = dist + (local_sol[count] - current_joint_val[count])*(local_sol[count] - current_joint_val[count]);
+//			}
+//			std::cout<<"dist : "<<dist<<std::endl;
 			least_sq_dist = sq_dist;
 			joint_val = local_sol;
 		}
