@@ -55,8 +55,8 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	double R = sqrt(des_pos(0)*des_pos(0) + des_pos(1)*des_pos(1));
 
-	std::cout<<"asin(d4/R) : "<<asin(d4/R)<<std::endl;
-	std::cout<<"atan2 term : "<<atan2(des_pos(1), des_pos(0))<<std::endl;
+	std::cout<<"asin(d4/R) : "<<180/M_PI*asin(d4/R)<<std::endl;
+	std::cout<<"atan2 term : "<<180/M_PI*atan2(des_pos(1), des_pos(0))<<std::endl;
 
 //	double th1_1, th1_2;
 
@@ -64,7 +64,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 //	th1_2 = atan2(des_pos(1), des_pos(0)) - acos(d4/R) + M_PI/2;
 
 	double th1_1 = atan2(des_pos(1), des_pos(0)) + asin(d4/R);
-	double th1_2 = atan2(des_pos(1), des_pos(0)) - asin(d4/R) + M_PI;
+	double th1_2 = - M_PI + (atan2(des_pos(1), des_pos(0)) - asin(d4/R));
 
 	std::cout<< "th1_1 : "<<th1_1<<", th1_2 : "<<th1_2<<std::endl;
 
@@ -94,7 +94,7 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	double th5_ratio = (eef_pos(0)*sin(th1_1) - eef_pos(1)*cos(th1_1) - d4)/d6;
 
-	std::cout<<"th5_ratio : "<<th5_ratio<<std::endl;
+	std::cout<<"th1_1 : "<<th1_1<<", th5_ratio : "<<th5_ratio<<std::endl;
 
 	if ( fabs( fabs(th5_ratio) - 1) < 0.0001)
 		th5_ratio = th5_ratio/fabs(th5_ratio)*1;
@@ -121,6 +121,8 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 	// computing th5 corresponding to th1_2
 
 	th5_ratio = (eef_pos(0)*sin(th1_2) - eef_pos(1)*cos(th1_2) - d4)/d6;
+
+	std::cout<<"th1_2 : "<<th1_2<<", th5_ratio : "<<th5_ratio<<std::endl;
 
 //	std::cout<<" des_pos(0) : "<<des_pos(0)<<", des_pos(1): "<<des_pos(1)<<std::endl;
 //	std::cout<<"term 1 : "<<des_pos(0)*sin(th1_2)<<", term 2 : "<< des_pos(1)*cos(th1_2)<<", d4 : "<<d4<<", d6 : "<<d6<<std::endl;
@@ -153,6 +155,8 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 	th5_ratio = (eef_pos(0)*sin(th1_3) - eef_pos(1)*cos(th1_3) - d4)/d6;
 
+	std::cout<<"th1_3 : "<<th1_3<<", th5_ratio : "<<th5_ratio<<std::endl;
+
 	if ( fabs( fabs(th5_ratio) - 1) < 0.0001)
 		th5_ratio = th5_ratio/fabs(th5_ratio)*1;
 
@@ -178,6 +182,9 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 	// computing th5 corresponding to th1_4
 
 	th5_ratio = (eef_pos(0)*sin(th1_4) - eef_pos(1)*cos(th1_4) - d4)/d6;
+
+	std::cout<<"th1_4 : "<<th1_4<<", th5_ratio : "<<th5_ratio<<std::endl;
+
 
 	if ( fabs( fabs(th5_ratio) - 1) < 0.0001)
 		th5_ratio = th5_ratio/fabs(th5_ratio)*1;
@@ -376,6 +383,10 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 		x_13 = T14(0,3);
 		y_13 = T14(2,3);
 
+		if(ctr == 12){
+			std::cout<<"T14 : \n"<<T14<<std::endl;
+		}
+
 		double th3_ratio = (x_13*x_13 + y_13*y_13 - a2*a2 - a3*a3)/(2*a2*a3);
 
 		if ( fabs( fabs(th3_ratio) - 1) < 0.0001 )
@@ -399,6 +410,20 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 		else{
 			th3_4 = 2*M_PI + th3_2;
 		}
+
+		if (ctr == 12){
+			std::cout<<"th3_1 : "<<th3_1<<", th3_2 : "<<th3_2<<", th3_3 : "<<th3_3<<", th3_4 : "<<th3_4<<std::endl;
+			std::cout<<" atan2(y_13, x_13) : "<<atan2(y_13, x_13)<<std::endl;
+			std::cout<<" atan2(a3*sin(th3_1), (a2 + a3*cos(th3_1))) : "<<atan2(fabs(a3)*sin(th3_1), (fabs(a2) + fabs(a3)*cos(th3_1)))<<", a3*sin(th3_1) : "<<fabs(a3)*sin(th3_1)<<", (a2 + a3*cos(th3_1)) : "<<(fabs(a2) + fabs(a3)*cos(th3_1))<<std::endl;
+			std::cout<<" atan2(a3*sin(th3_2), (a2 + a3*cos(th3_2))) : "<<atan2(fabs(a3)*sin(th3_2), (fabs(a2) + fabs(a3)*cos(th3_2)))<<", a3*sin(th3_2) : "<<fabs(a3)*sin(th3_2)<<", (a2 + a3*cos(th3_2)) : "<<(fabs(a2) + fabs(a3)*cos(th3_2))<<std::endl;
+			std::cout<<" atan2(a3*sin(th3_3), (a2 + a3*cos(th3_3))) : "<<atan2(fabs(a3)*sin(th3_3), (fabs(a2) + fabs(a3)*cos(th3_3)))<<", a3*sin(th3_3) : "<<fabs(a3)*sin(th3_3)<<", (a2 + a3*cos(th3_3)) : "<<(fabs(a2) + fabs(a3)*cos(th3_3))<<std::endl;
+			std::cout<<" atan2(a3*sin(th3_4), (a2 + a3*cos(th3_4))) : "<<atan2(fabs(a3)*sin(th3_4), (fabs(a2) + fabs(a3)*cos(th3_4)))<<", a3*sin(th3_4) : "<<fabs(a3)*sin(th3_4)<<", (a2 + a3*cos(th3_4)) : "<<(fabs(a2) + fabs(a3)*cos(th3_4))<<std::endl;
+		}
+
+//		double th2_1 = atan2(y_13, x_13) - atan2(fabs(a3)*sin(th3_1), (fabs(a2) + fabs(a3)*cos(th3_1)));
+//		double th2_2 = atan2(y_13, x_13) - atan2(fabs(a3)*sin(th3_2), (fabs(a2) + fabs(a3)*cos(th3_2)));
+//		double th2_3 = atan2(y_13, x_13) - atan2(fabs(a3)*sin(th3_3), (fabs(a2) + fabs(a3)*cos(th3_3)));
+//		double th2_4 = atan2(y_13, x_13) - atan2(fabs(a3)*sin(th3_4), (fabs(a2) + fabs(a3)*cos(th3_4)));
 
 		double th2_1 = atan2(y_13, x_13) - atan2(a3*sin(th3_1), (a2 + a3*cos(th3_1)));
 		double th2_2 = atan2(y_13, x_13) - atan2(a3*sin(th3_2), (a2 + a3*cos(th3_2)));
@@ -655,17 +680,12 @@ int IK6AxisOffset::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 		sol_final[16*ctr+14] = {th1, th2_4, th3_4, th4_15, th5, th6};
 		sol_final[16*ctr+15] = {th1, th2_8, th3_4, th4_16, th5, th6};
 
-//		if (ctr == 8){
-//			std::cout<<"j1 : "<<sol_final[8*ctr][0]<<", j2 : "<<sol_final[8*ctr][1]<<" j3 : "<<sol_final[8*ctr][2]<<" j4 : "<<sol_final[8*ctr][3]<<" j5 : "<<sol_final[8*ctr][4]<<" j6 : "<<sol_final[8*ctr][5]<<std::endl;
-//			std::cout<<"j1 : "<<sol_final[8*ctr+1][0]<<", j2 : "<<sol_final[8*ctr+1][1]<<" j3 : "<<sol_final[8*ctr+1][2]<<" j4 : "<<sol_final[8*ctr+1][3]<<" j5 : "<<sol_final[8*ctr+1][4]<<" j6 : "<<sol_final[8*ctr+1][5]<<std::endl;
-//			std::cout<<"j1 : "<<sol_final[8*ctr+2][0]<<", j2 : "<<sol_final[8*ctr+2][1]<<" j3 : "<<sol_final[8*ctr+2][2]<<" j4 : "<<sol_final[8*ctr+2][3]<<" j5 : "<<sol_final[8*ctr+2][4]<<" j6 : "<<sol_final[8*ctr+2][5]<<std::endl;
-//			std::cout<<"j1 : "<<sol_final[8*ctr+3][0]<<", j2 : "<<sol_final[8*ctr+3][1]<<" j3 : "<<sol_final[8*ctr+3][2]<<" j4 : "<<sol_final[8*ctr+3][3]<<" j5 : "<<sol_final[8*ctr+3][4]<<" j6 : "<<sol_final[8*ctr+3][5]<<std::endl;
-//			std::cout<<"j1 : "<<sol_final[8*ctr+4][0]<<", j2 : "<<sol_final[8*ctr+4][1]<<" j3 : "<<sol_final[8*ctr+4][2]<<" j4 : "<<sol_final[8*ctr+4][3]<<" j5 : "<<sol_final[8*ctr+4][4]<<" j6 : "<<sol_final[8*ctr+4][5]<<std::endl;
-//			std::cout<<"j1 : "<<sol_final[8*ctr+5][0]<<", j2 : "<<sol_final[8*ctr+5][1]<<" j3 : "<<sol_final[8*ctr+5][2]<<" j4 : "<<sol_final[8*ctr+5][3]<<" j5 : "<<sol_final[8*ctr+5][4]<<" j6 : "<<sol_final[8*ctr+5][5]<<std::endl;
-//			std::cout<<"j1 : "<<sol_final[8*ctr+6][0]<<", j2 : "<<sol_final[8*ctr+6][1]<<" j3 : "<<sol_final[8*ctr+6][2]<<" j4 : "<<sol_final[8*ctr+6][3]<<" j5 : "<<sol_final[8*ctr+6][4]<<" j6 : "<<sol_final[8*ctr+6][5]<<std::endl;
-//			std::cout<<"j1 : "<<sol_final[8*ctr+7][0]<<", j2 : "<<sol_final[8*ctr+7][1]<<" j3 : "<<sol_final[8*ctr+7][2]<<" j4 : "<<sol_final[8*ctr+7][3]<<" j5 : "<<sol_final[8*ctr+7][4]<<" j6 : "<<sol_final[8*ctr+7][5]<<std::endl;
-//
-//		}
+
+		if (ctr == 12){
+			for (int i_ctr = 0; i_ctr < 16; i_ctr++){
+					std::cout<<"j1 : "<<sol_final[16*ctr+i_ctr][0]<<", j2 : "<<sol_final[16*ctr+i_ctr][1]<<" j3 : "<<sol_final[16*ctr+i_ctr][2]<<" j4 : "<<sol_final[16*ctr+i_ctr][3]<<" j5 : "<<sol_final[16*ctr+i_ctr][4]<<" j6 : "<<sol_final[16*ctr+i_ctr][5]<<std::endl;
+			}
+		}
 
 	}
 
