@@ -17,17 +17,29 @@ ForwardKinematics::ForwardKinematics() {
 
 	double a2, a3, d1, d4, d5, d6;
 
+//	a2 = -0.24355;
+//	a3 = -0.2132;
+//	d1 = 0.15185;
+//	d4 = 0.13105;
+//	d5 = 0.08535;
+//	d6 = 0.0921;
+//
+//	alpha = {0, M_PI/2, 0, 0, M_PI/2, -M_PI/2};
+//	a = {0, 0, a2, a3, 0, 0};
+//	d = {d1, 0, 0, d4, d5, d6};
+//	theta = {0, 0, 0, 0, 0, 0};
+
 	a2 = -0.24355;
-	a3 = -0.2132;
-	d1 = 0.15185;
+	a3 = 0;
+	d1 = 0;
 	d4 = 0.13105;
 	d5 = 0.08535;
 	d6 = 0.0921;
 
-	alpha = {0, M_PI/2, 0, 0, M_PI/2, -M_PI/2};
-	a = {0, 0, a2, a3, 0, 0};
-	d = {d1, 0, 0, d4, d5, d6};
-	theta = {0, 0, 0, 0, 0, 0};
+	alpha = {0, M_PI/2, 0, -M_PI/2, M_PI/2, -M_PI/2};
+	a = {0, 0, 0.3, 0, 0, 0};
+	d = {0, 0, 0, 0.1, 0, 0};
+	theta = {0, M_PI/2, -M_PI/2, 0, 0, 0};
 
 }
 
@@ -42,6 +54,7 @@ int ForwardKinematics::computeFK(std::vector<double> joint_angles, Eigen::Matrix
 	T_loc.resize(4,4);
 	T_glo.resize(4,4);
 
+
 	T_glo.setIdentity(4, 4);
 
 	for (size_t ctr = 0; ctr < alpha.size(); ctr++){
@@ -52,6 +65,7 @@ int ForwardKinematics::computeFK(std::vector<double> joint_angles, Eigen::Matrix
 				0, 0, 0, 1;
 
 		T_glo = T_glo * T_loc;
+
 	}
 
 	trans_mat.resize(4,4);
