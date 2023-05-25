@@ -77,9 +77,9 @@ int IK6AxisInline::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 		Eigen::Matrix3d rot_mat_03;
 
-		rot_mat_03 << cos(th1)*cos(th2+th3), -sin(th1), -cos(th1)*sin(th2+th3),
-				sin(th1)*cos(th2+th3),  cos(th1), -sin(th1)*sin(th2+th3),
-				sin(th2+th3), 0, cos(th2+th3);
+		rot_mat_03 << cos(th1)*cos(th2+th3), -sin(th1), cos(th1)*sin(th2+th3),
+				sin(th1)*cos(th2+th3),  cos(th1), sin(th1)*sin(th2+th3),
+				-sin(th2+th3), 0, cos(th2+th3);
 
 
 		Eigen::Matrix3d rot_mat_46 = rot_mat_03.transpose()*eef_orient;
@@ -88,12 +88,12 @@ int IK6AxisInline::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 		double th4_1, th5_1, th6_1, th4_2, th5_2, th6_2;
 
 		th5_1 = atan2( sqrt( rot_mat_46(2,0)*rot_mat_46(2,0) + rot_mat_46(2,1)*rot_mat_46(2,1) ), rot_mat_46(2,2) );
-		th4_1 = atan2( -rot_mat_46(1,2)/sin(th5_1), -rot_mat_46(0,2)/sin(th5_1));
-		th6_1 = atan2( -rot_mat_46(2,1)/sin(th5_1), rot_mat_46(2,0)/sin(th5_1));
+		th4_1 = atan2( rot_mat_46(1,2)/sin(th5_1), rot_mat_46(0,2)/sin(th5_1));
+		th6_1 = atan2( rot_mat_46(2,1)/sin(th5_1), -rot_mat_46(2,0)/sin(th5_1));
 
 		th5_2 = atan2( -sqrt( rot_mat_46(2,0)*rot_mat_46(2,0) + rot_mat_46(2,1)*rot_mat_46(2,1) ), rot_mat_46(2,2) );
-		th4_2 = atan2( -rot_mat_46(1,2)/sin(th5_2), -rot_mat_46(0,2)/sin(th5_2));
-		th6_2 = atan2( -rot_mat_46(2,1)/sin(th5_2), rot_mat_46(2,0)/sin(th5_2));
+		th4_2 = atan2( rot_mat_46(1,2)/sin(th5_2), rot_mat_46(0,2)/sin(th5_2));
+		th6_2 = atan2( rot_mat_46(2,1)/sin(th5_2), -rot_mat_46(2,0)/sin(th5_2));
 
 
 		std::vector<double> sol_1 = {th1, th2, th3, th4_1, th5_1, th6_1};
