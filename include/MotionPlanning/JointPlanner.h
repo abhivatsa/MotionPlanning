@@ -32,33 +32,29 @@ public:
 	int computePath(std::vector<std::vector<double>> target_jpos, std::vector<std::vector<double>> target_jvel, std::vector<std::vector<double>> target_jacc, std::vector<double> segment_time, int num_loop);
 
 	/** Add a custom publisher function (for ros1 and ros2). This function will be called at the end of each segment.
-		 * \param[in] callback_function of type void (std::vector<motion_planning::TrajectoryPoint>) (e.g., auto callback_function = std::bind(${NAME_OF_FUNCTION},std::placeholders::_1);)
-		 */
+	 * \param[in] callback_function of type void (std::vector<motion_planning::TrajectoryPoint>) (e.g., auto callback_function = std::bind(${NAME_OF_FUNCTION},std::placeholders::_1);)
+	 */
 	void AddPublisher(std::function<void(std::vector<TrajectoryPoint>)> publish_function);
 
-	/** Add a custom watchdog function
-		 * \param[in] callback_function of type void (void) (e.g., auto callback_function = std::bind(${NAME_OF_FUNCTION});)
-		 */
-//	void AddWatchdog(std::function<void(void)> watchdog_function);
-
-private:
-
+protected:
+	/** Compute segment time from joint positions, velcities and accelerations
+	 *
+	 */
 	double ja_jv_to_time(std::vector<double> desired_joint_vel, std::vector<double> &desired_joint_acc, std::vector<double> init_joint_val, std::vector<double> final_joint_val);
 
+	/** Computes the trajectory points for point to point motion in joint space with zero final and initial velocities. At the end of the computation, it calls user defined callback function (via addPublisher)
+	 *
+	 */
 	int pointToPointFtTime(std::vector<double> init_jpos, std::vector<double> final_jpos, double &segment_time, std::vector<double> desired_acc, std::vector<double> &last_jpos, std::vector<TrajectoryPoint> &trajectory_points);
-
-	void defaultPublishFunction(std::vector<TrajectoryPoint> traj_points);
-//	void defaultWatchdogFunction();
-
 	std::function<void(std::vector<TrajectoryPoint> traj_points)> publish_data;
-//	std::function<void(void)> _watchdog;
-
-	std::vector<double> MAX_JOINT_VEL;
-	std::vector<double> MAX_JOINT_ACC;
 
 	int numJoints = 6;
-
 	double total_time;
+
+private:
+	void defaultPublishFunction(std::vector<TrajectoryPoint> traj_points);
+	std::vector<double> MAX_JOINT_VEL;
+	std::vector<double> MAX_JOINT_ACC;
 
 };
 

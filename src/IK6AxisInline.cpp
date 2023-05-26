@@ -15,8 +15,8 @@ IK6AxisInline::IK6AxisInline() {
 //	l2 = 400;
 //	l3 = 80;
 	l0 = 0;
-	l1 = 0.3;
-	l2 = 0.1;
+	l1 = 0.6;
+	l2 = 0.4;
 	l3 = 0;
 
 }
@@ -63,16 +63,16 @@ int IK6AxisInline::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 		double th1, th2, th3;
 
 		if (ctr == 0){
-			th1 = th1_1; th2 = -th2_1; th3 = -th3_1;
+			th1 = th1_1; th2 = th2_1; th3 = th3_1;
 		}
 		else if (ctr == 1){
-			th1 = th1_2; th2 = th2_1; th3 = th3_1;
+			th1 = th1_2; th2 = -th2_1; th3 = -th3_1;
 		}
 		else if (ctr == 2){
-			th1 = th1_1; th2 = -th2_2; th3 = -th3_2;
+			th1 = th1_1; th2 = th2_2; th3 = th3_2;
 		}
 		else{
-			th1 = th1_2; th2 = th2_2; th3 = th3_2;
+			th1 = th1_2; th2 = -th2_2; th3 = -th3_2;
 		}
 
 		Eigen::Matrix3d rot_mat_03;
@@ -108,13 +108,13 @@ int IK6AxisInline::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 //	{
 //		auto pos_ = pos_sol_final[i];
 //
-//		std::cout<<"i : "<<i<<" ("<<pos_[0]<<","<<pos_[1]<<","<<pos_[2]<<")\n";
+////		std::cout<<"i : "<<i<<" ("<<pos_[0]<<","<<pos_[1]<<","<<pos_[2]<<")\n";
 //
-//		double x = -cos(pos_[0])*(l2*sin(pos_[1]+pos_[2]) - l1*cos(M_PI/2+pos_[1]));
-//		double y = -sin(pos_[0])*(l2*sin(pos_[1]+pos_[2]) - l1*cos(M_PI/2+pos_[1]));
-//		double z = l2*cos(pos_[1]+pos_[2]) + l1*sin(M_PI/2 + pos_[1]);
+//		double x = cos(pos_[0])*(l2*sin(pos_[1]+pos_[2]) + l1*cos(-M_PI/2+pos_[1]));
+//		double y = sin(pos_[0])*(l2*sin(pos_[1]+pos_[2]) + l1*cos(-M_PI/2+pos_[1]));
+//		double z = l2*cos(pos_[1]+pos_[2]) - l1*sin(-M_PI/2 + pos_[1]);
 //
-//		std::cout<<"("<<x<<","<<y<<","<<z<<"\n";
+//		std::cout<<"("<<x<<","<<y<<","<<z<<")\n";
 //	}
 
 	double least_sq_dist = std::numeric_limits<int>::max();
