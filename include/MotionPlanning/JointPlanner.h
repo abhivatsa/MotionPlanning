@@ -11,6 +11,8 @@
 #include <iostream>
 #include <vector>
 #include <functional>
+#include <math.h>
+
 
 namespace motion_planning {
 
