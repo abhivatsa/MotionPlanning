@@ -61,7 +61,13 @@ int ForwardKinematics::computeFK(std::vector<double> joint_angles, Eigen::Matrix
 				sin(theta[ctr] + joint_angles[ctr])*sin(alpha[ctr]), cos(theta[ctr] + joint_angles[ctr])*sin(alpha[ctr]), cos(alpha[ctr]), d[ctr]*cos(alpha[ctr]),
 				0, 0, 0, 1;
 
+		std::cout<<" ***************************************** FK : "<<ctr<<std::endl;
+
+		std::cout<<"T_loc : \n"<<T_loc<<std::endl;
+
+
 		T_glo = T_glo * T_loc;
+		std::cout<<"T_glo : \n"<<T_glo<<std::endl;
 
 	}
 
