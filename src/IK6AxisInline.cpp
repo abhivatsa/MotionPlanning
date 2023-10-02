@@ -224,4 +224,84 @@ int IK6AxisInline::computeIK(Eigen::Vector3d eef_pos, Eigen::Matrix3d eef_orient
 
 }
 
+int IK6AxisInline::computeIK(const std::array<double, 3> &eef_pos,
+		const std::array<double, 3> &eef_rpy,
+		const std::array<double, 6> &current_joint_position,
+		std::array<double, 6> &joint_val) {
+
+	Eigen::Vector3d pos(eef_pos[0], eef_pos[1], eef_pos[2]);
+	Eigen::Quaterniond quat;
+	double rpy[3] = {eef_rpy[0], eef_rpy[1], eef_rpy[2]};
+	eulerToQuaternion(rpy, quat);
+
+	Eigen::Matrix3d rot(quat);
+
+	std::vector<double> current_position, solution;
+	for(int i = 0; i < 6; i++)
+		current_position.push_back(current_joint_position[i]);
+
+	computeIK(pos, rot, current_position, solution);
+
+	for(int i = 0; i < 6; i++)
+		joint_val[i] = solution[i];
+
+	return 0;
+}
+
+int IK6AxisInline::computeIK(const double eef_pos[3], const double eef_rpy[3],
+		const double current_joint_position[6], double joint_val[6]) {
+
+	Eigen::Vector3d pos(eef_pos[0], eef_pos[1], eef_pos[2]);
+	Eigen::Quaterniond quat;
+
+	eulerToQuaternion(eef_rpy, quat);
+
+	Eigen::Matrix3d rot(quat);
+
+	std::vector<double> current_position, solution;
+	for(int i = 0; i < 6; i++)
+		current_position.push_back(current_joint_position[i]);
+
+	computeIK(pos, rot, current_position, solution);
+
+	for(int i = 0; i < 6; i++)
+		joint_val[i] = solution[i];
+
+	return 0;
+}
+
+void IK6AxisInline::quaternionToEuler(const Eigen::Quaterniond &quat,
+		double rpy[3]) {
+
+	// roll (x-axis rotation)
+	double sinr_cosp = 2 * (quat.w() * quat.x() + quat.y() * quat.z());
+	double cosr_cosp = 1 - 2 * (quat.x() * quat.x() + quat.y() * quat.y());
+	rpy[0] = atan2(sinr_cosp, cosr_cosp);
+
+	// pitch (y-axis rotation)
+	double sinp = sqrt(1 + 2 * (quat.w() * quat.y() - quat.x() * quat.z()));
+	double cosp = sqrt(1 - 2 * (quat.w() * quat.y() - quat.x() * quat.z()));
+	rpy[1] = 2 * atan2(sinp, cosp) - M_PI / 2;
+
+	// yaw (z-axis rotation)
+	double siny_cosp = 2 * (quat.w() * quat.z() + quat.x() * quat.y());
+	double cosy_cosp = 1 - 2 * (quat.y() * quat.y() + quat.z() * quat.z());
+	rpy[2] = atan2(siny_cosp, cosy_cosp);
+}
+
+void IK6AxisInline::eulerToQuaternion(const double rpy[3],
+		Eigen::Quaterniond &quat) {
+	double cr = cos(rpy[0] * 0.5);
+	double sr = sin(rpy[0] * 0.5);
+	double cp = cos(rpy[1] * 0.5);
+	double sp = sin(rpy[1] * 0.5);
+	double cy = cos(rpy[2] * 0.5);
+	double sy = sin(rpy[2] * 0.5);
+
+	quat.w() = cr * cp * cy + sr * sp * sy;
+	quat.x() = sr * cp * cy - cr * sp * sy;
+	quat.y() = cr * sp * cy + sr * cp * sy;
+	quat.z() = cr * cp * sy - sr * sp * cy;
+}
+
 } /* namespace motion_planning */

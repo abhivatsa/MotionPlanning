@@ -30,6 +30,10 @@ public:
 	 * return 0 if successful
 	 */
 	int computeFK(std::vector<double> joint_angles, Eigen::MatrixXd& trans_mat);
+	int computeFK(std::vector<double> joint_angles, double eef_pos[3], double eef_rpy[3]);
+
+	void quaternionToEuler(const Eigen::Quaterniond &quat, double rpy[3]);
+	void eulerToQuaternion(const double rpy[3], Eigen::Quaterniond &quat);
 
 private:
 	std::vector<double> alpha, a, d, theta;

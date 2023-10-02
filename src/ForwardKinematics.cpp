@@ -80,4 +80,53 @@ int ForwardKinematics::computeFK(std::vector<double> joint_angles, Eigen::Matrix
 
 }
 
+void ForwardKinematics::quaternionToEuler(const Eigen::Quaterniond &quat,
+		double rpy[3]) {
+	// roll (x-axis rotation)
+	double sinr_cosp = 2 * (quat.w() * quat.x() + quat.y() * quat.z());
+	double cosr_cosp = 1 - 2 * (quat.x() * quat.x() + quat.y() * quat.y());
+	rpy[0] = atan2(sinr_cosp, cosr_cosp);
+
+	// pitch (y-axis rotation)
+	double sinp = sqrt(1 + 2 * (quat.w() * quat.y() - quat.x() * quat.z()));
+	double cosp = sqrt(1 - 2 * (quat.w() * quat.y() - quat.x() * quat.z()));
+	rpy[1] = 2 * atan2(sinp, cosp) - M_PI / 2;
+
+	// yaw (z-axis rotation)
+	double siny_cosp = 2 * (quat.w() * quat.z() + quat.x() * quat.y());
+	double cosy_cosp = 1 - 2 * (quat.y() * quat.y() + quat.z() * quat.z());
+	rpy[2] = atan2(siny_cosp, cosy_cosp);
+}
+
+void ForwardKinematics::eulerToQuaternion(const double rpy[3],
+		Eigen::Quaterniond &quat) {
+	double cr = cos(rpy[0] * 0.5);
+	double sr = sin(rpy[0] * 0.5);
+	double cp = cos(rpy[1] * 0.5);
+	double sp = sin(rpy[1] * 0.5);
+	double cy = cos(rpy[2] * 0.5);
+	double sy = sin(rpy[2] * 0.5);
+
+	quat.w() = cr * cp * cy + sr * sp * sy;
+	quat.x() = sr * cp * cy - cr * sp * sy;
+	quat.y() = cr * sp * cy + sr * cp * sy;
+	quat.z() = cr * cp * sy - sr * sp * cy;
+}
+
+int ForwardKinematics::computeFK(std::vector<double> joint_angles,
+		double eef_pos[3], double eef_rpy[3]) {
+	Eigen::MatrixXd trans_mat;
+	computeFK(joint_angles, trans_mat);
+
+	eef_pos[0] = trans_mat(0,3);
+	eef_pos[1] = trans_mat(1,3);
+	eef_pos[2] = trans_mat(2,3);
+
+	Eigen::Matrix3d rot = trans_mat.topLeftCorner(3, 3);
+	Eigen::Quaterniond quat(rot);
+	quaternionToEuler(quat, eef_rpy);
+
+	return 0;
+}
+
 } /* namespace motion_planning */
