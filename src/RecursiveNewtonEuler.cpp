@@ -28,12 +28,20 @@ RecursiveNewtonEuler::RecursiveNewtonEuler() {
 	d5 = 0;
 	d6 = 0;
 
-	alpha = {0, M_PI/2, 0, 0, M_PI/2, -M_PI/2};
-	a = {0, 0, a2, a3, 0, 0};
-	d = {d1, 0, 0, d4, d5, d6};
-	theta = {0, 0, 0, 0, 0, 0};
+	/* offset */
+//	alpha = {0, M_PI/2, 0, 0, M_PI/2, -M_PI/2};
+//	a = {0, 0, a2, a3, 0, 0};
+//	d = {d1, 0, 0, d4, d5, d6};
+//	theta = {0, 0, 0, 0, 0, 0};
 
-	m = {1.98, 3.4445, 1.437, 0.871, 0.805, 0.261};
+	/* Inline */
+	alpha = {0, -M_PI/2, 0, M_PI/2, -M_PI/2, M_PI/2};
+	a = {0, 0, 0.6, 0, 0, 0};
+	d = {0, 0, 0, 0.4, 0, 0};
+	theta = {0, -M_PI/2, M_PI/2, 0, 0, 0};
+
+//	m = {1.98, 3.4445, 1.437, 0.871, 0.805, 0.261};
+	m = {0, 0, 0, 0, 0, 5};
 
 	pos_com[0] << 0, -0.02, 0;
 	pos_com[1] << 0.13, 0, 0.1157;
@@ -41,6 +49,7 @@ RecursiveNewtonEuler::RecursiveNewtonEuler() {
 	pos_com[3] << 0, 0, 0.01;
 	pos_com[4] << 0, 0, 0.01;
 	pos_com[5] << 0, 0, -0.02;
+//	pos_com[5] << 0, 0, 0;
 
 	inertia_com[0].setZero(3, 3);
 	inertia_com[1].setZero(3, 3);
@@ -67,6 +76,9 @@ int RecursiveNewtonEuler::computeTorque(std::vector<double> joint_pos, std::vect
 
 	std::vector<Eigen::Vector3d> force_com, torque_com;
 
+	force_com.resize(7);
+	torque_com.resize(7);
+
 	force_com[0].setZero(3);
 	torque_com[0].setZero(3);
 
@@ -75,6 +87,7 @@ int RecursiveNewtonEuler::computeTorque(std::vector<double> joint_pos, std::vect
 	omega.setZero(3);
 	omega_dot.setZero(3);
 	vel_dot.setZero(3);
+	vel_dot.z() = -10;
 
 	for (unsigned int joint_ctr = 0; joint_ctr < joint_pos.size(); joint_ctr++) {
 
@@ -83,11 +96,13 @@ int RecursiveNewtonEuler::computeTorque(std::vector<double> joint_pos, std::vect
 		if (solve_chk == 0){
 
 			omega_next = rotation_mat * omega + joint_vel[joint_ctr] * z_dir;
-			omega_dot_next = rotation_mat * omega_dot + rotation_mat * ( omega.cross(z_dir) )
+
+			omega_dot_next = rotation_mat * omega_dot + rotation_mat * ( omega.cross( joint_vel[joint_ctr] * z_dir) )
 							+ joint_acc[joint_ctr] * z_dir;
+
 			vel_dot_next = rotation_mat * ( omega_dot.cross(pos_vec) + omega.cross( omega.cross( pos_vec ) ) + vel_dot );
 
-			Eigen::Vector3d vel_dot_com = omega_dot_next.cross(pos_com[joint_ctr]) + omega_next.cross( omega_next.cross( pos_com[joint_ctr]) ) + vel_dot;
+			Eigen::Vector3d vel_dot_com = omega_dot_next.cross(pos_com[joint_ctr]) + omega_next.cross( omega_next.cross( pos_com[joint_ctr]) ) + vel_dot_next;
 
 			force_com[joint_ctr + 1] = m[joint_ctr]*vel_dot_com;
 			torque_com[joint_ctr + 1] = inertia_com[joint_ctr]*omega_dot_next + omega_next.cross(inertia_com[joint_ctr]*omega_next);
@@ -134,6 +149,7 @@ int RecursiveNewtonEuler::computeTransformationMat(double joint_pos, int joint_n
 			sin(joint_pos + theta[joint_num])*sin(alpha[joint_num]), cos(joint_pos + theta[joint_num])*sin(alpha[joint_num]), cos(alpha[joint_num]);
 
 	pos_mat << a[joint_num], -sin(alpha[joint_num])*d[joint_num], cos(alpha[joint_num])*d[joint_num];
+
 
 	return 0;
 
